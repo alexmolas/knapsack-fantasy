@@ -20,6 +20,7 @@ class Player:
     points_home: int
     points_away: int
     is_captain: bool
+    team_id: int
 
 
 @dataclass(frozen=True)
@@ -61,21 +62,13 @@ class Team:
     def strikers(self) -> Sequence[Player]:
         return [p for p in self.players if p.position == 4]
 
-    def expected_value(self, player_value: Callable[[Player], Value], ):
-        value = 0
-        for p in self.players:
-            if p.is_captain:
-                value += 2 * player_value(p)
-            else:
-                value += player_value(p)
-        return value
+    def expected_value(self):
+        return sum(self.player_value(p) for p in self.players)
 
-    def team_cost(self, player_cost: Callable[[Player], Cost]):
-        return sum(player_cost(p) for p in self.players)
+    def team_cost(self):
+        return sum(self.player_cost(p) for p in self.players)
 
-    def add_player(self, player: Player, is_captain: bool):
-        if is_captain:
-            player = replace(player, is_captain=True)
+    def add_player(self, player: Player):
         new_players = self.players + [player]
         self.players = new_players
 
