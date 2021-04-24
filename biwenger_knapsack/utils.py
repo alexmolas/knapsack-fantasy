@@ -30,5 +30,5 @@ def team_information(team: Team):
             print(p.name)
 
     print()
-    print(f"Expected Value: {team.expected_value(player_value=team.player_value)}, "
-          f"Total Cost: {team.team_cost(player_cost=team.player_cost)}")
+    print(f"Expected Value: {team.expected_value()}, "
+          f"Total Cost: {team.team_cost()}")

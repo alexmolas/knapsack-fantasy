@@ -1,10 +1,10 @@
-from typing import Sequence
+from typing import Sequence, Dict
 
 from biwenger_knapsack.models import Player
 
 
-def parse_players(players) -> Sequence[Player]:
-    parsed_players = []
+def parse_players(players) -> Dict[str, Player]:
+    parsed_players = {}
     for player_id, player_info in players.items():
         player = Player(name=player_info['name'],
                         position=player_info['position'],
@@ -17,6 +17,7 @@ def parse_players(players) -> Sequence[Player]:
                         points_home=player_info['pointsHome'],
                         fitness=player_info['fitness'],
                         player_id=player_id,
-                        is_captain=False)
-        parsed_players.append(player)
+                        is_captain=False,
+                        team_id=player_info['teamID'])
+        parsed_players[player_info['slug']] = player
     return parsed_players
