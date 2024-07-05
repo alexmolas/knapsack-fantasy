@@ -1,9 +1,5 @@
-import abc
-from dataclasses import dataclass, replace
-from typing import Tuple, Callable, Sequence, List, NewType
-
-Value = NewType("Value", float)
-Cost = NewType("Cost", float)
+from dataclasses import dataclass
+from typing import Tuple, Callable, Sequence, List
 
 
 @dataclass(frozen=True)
@@ -35,11 +31,13 @@ class TeamConstraints:
 
 
 class Team:
-    def __init__(self,
-                 constraints: TeamConstraints,
-                 players: List[Player],
-                 player_value: Callable[[Player], Value],
-                 player_cost: Callable[[Player], Cost]):
+    def __init__(
+        self,
+        constraints: TeamConstraints,
+        players: List[Player],
+        player_value: Callable[[Player], float],
+        player_cost: Callable[[Player], float],
+    ):
         self.constraints = constraints
         self.constraints_fns = self.constraints_to_funcs()
         self.players = players
@@ -80,13 +78,18 @@ class Team:
 
     def constraints_to_funcs(self):
         constraints_fns = []
-        for r, position in {'range_pt': 1, 'range_df': 2, 'range_mc': 3, 'range_dl': 4}.items():
+        for r, position in {
+            "range_pt": 1,
+            "range_df": 2,
+            "range_mc": 3,
+            "range_dl": 4,
+        }.items():
             constraint = getattr(self.constraints, r)
 
             def _constraint_fn(ps: Sequence[Player]):
-                h = len([p for p in ps if p.position == position]) >= constraint[0]
-                l = len([p for p in ps if p.position == position]) <= constraint[1]
-                return h & l
+                lower = len([p for p in ps if p.position == position]) >= constraint[0]
+                upper = len([p for p in ps if p.position == position]) <= constraint[1]
+                return upper & lower
 
             constraints_fns.append(_constraint_fn)
 
